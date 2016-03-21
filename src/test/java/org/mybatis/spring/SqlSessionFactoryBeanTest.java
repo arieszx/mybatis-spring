@@ -15,12 +15,15 @@
  */
 package org.mybatis.spring;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Properties;
 
+import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.impl.PerpetualCache;
 import org.apache.ibatis.io.JBoss6VFS;
 import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
@@ -41,6 +44,7 @@ import org.mybatis.spring.transaction.SpringManagedTransactionFactory;
 import org.mybatis.spring.type.DummyTypeAlias;
 import org.mybatis.spring.type.DummyTypeHandler;
 import org.mybatis.spring.type.SuperType;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -400,11 +404,12 @@ public final class SqlSessionFactoryBeanTest {
   }
 
   @Test
-  public void testAddCache() {
+  public void testAddCaches() {
     setupFactoryBean();
-    PerpetualCache cache = new PerpetualCache("test-cache");
-    this.factoryBean.setCache(cache);
-    assertEquals("test-cache", this.factoryBean.getCache().getId());
+    Cache cache1 = new PerpetualCache("test-cache1");
+    Cache cache2 = new PerpetualCache("test-cache2");
+    this.factoryBean.addCache(cache1, cache2);
+    assertThat(Arrays.asList(this.factoryBean.getCaches()), containsInAnyOrder(cache1, cache2));
   }
 
   private void assertDefaultConfig(SqlSessionFactory factory) {

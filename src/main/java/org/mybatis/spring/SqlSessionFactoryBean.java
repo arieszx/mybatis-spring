@@ -116,7 +116,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
   private Class<? extends VFS> vfs;
 
-  private Cache cache;
+  private Cache[] caches;
 
   private ObjectFactory objectFactory;
 
@@ -171,12 +171,12 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     this.vfs = vfs;
   }
 
-  public Cache getCache() {
-    return this.cache;
+  public Cache[] getCaches() {
+    return this.caches;
   }
 
-  public void setCache(Cache cache) {
-    this.cache = cache;
+  public void addCache(Cache... caches) {
+    this.caches = caches;
   }
 
   /**
@@ -484,8 +484,10 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
       configuration.setVfsImpl(this.vfs);
     }
 
-    if (this.cache != null) {
-      configuration.addCache(this.cache);
+    if (!isEmpty(this.caches)) {
+      for (Cache cache : caches) {
+        configuration.addCache(cache);
+      }
     }
 
     if (xmlConfigBuilder != null) {
